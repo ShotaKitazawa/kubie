@@ -6,67 +6,67 @@ on:
       - '*'
 
 jobs:
-  build-linux-amd64-static:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: x86_64-unknown-linux-musl
-      - run: sudo apt-get update && sudo apt-get install -y musl-tools
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release --target x86_64-unknown-linux-musl
-      - uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/x86_64-unknown-linux-musl/release/kubie
-          asset_name: kubie-linux-amd64
-          tag: ${{ github.ref }}
+  #build-linux-amd64-static:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - uses: actions-rs/toolchain@v1
+  #      with:
+  #        toolchain: stable
+  #        target: x86_64-unknown-linux-musl
+  #    - run: sudo apt-get update && sudo apt-get install -y musl-tools
+  #    - uses: actions-rs/cargo@v1
+  #      with:
+  #        command: build
+  #        args: --release --target x86_64-unknown-linux-musl
+  #    - uses: svenstaro/upload-release-action@v2
+  #      with:
+  #        repo_token: ${{ secrets.GITHUB_TOKEN }}
+  #        file: target/x86_64-unknown-linux-musl/release/kubie
+  #        asset_name: kubie-linux-amd64
+  #        tag: ${{ github.ref }}
 
-  build-linux-arm32-static:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: arm-unknown-linux-musleabi
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --release --target arm-unknown-linux-musleabi
-      - uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/arm-unknown-linux-musleabi/release/kubie
-          asset_name: kubie-linux-arm32
-          tag: ${{ github.ref }}
+  #build-linux-arm32-static:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - uses: actions-rs/toolchain@v1
+  #      with:
+  #        toolchain: stable
+  #        target: arm-unknown-linux-musleabi
+  #        override: true
+  #    - uses: actions-rs/cargo@v1
+  #      with:
+  #        use-cross: true
+  #        command: build
+  #        args: --release --target arm-unknown-linux-musleabi
+  #    - uses: svenstaro/upload-release-action@v2
+  #      with:
+  #        repo_token: ${{ secrets.GITHUB_TOKEN }}
+  #        file: target/arm-unknown-linux-musleabi/release/kubie
+  #        asset_name: kubie-linux-arm32
+  #        tag: ${{ github.ref }}
 
-  build-linux-arm64-static:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: aarch64-unknown-linux-musl
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --release --target aarch64-unknown-linux-musl
-      - uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/aarch64-unknown-linux-musl/release/kubie
-          asset_name: kubie-linux-arm64
-          tag: ${{ github.ref }}
+  #build-linux-arm64-static:
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - uses: actions-rs/toolchain@v1
+  #      with:
+  #        toolchain: stable
+  #        target: aarch64-unknown-linux-musl
+  #        override: true
+  #    - uses: actions-rs/cargo@v1
+  #      with:
+  #        use-cross: true
+  #        command: build
+  #        args: --release --target aarch64-unknown-linux-musl
+  #    - uses: svenstaro/upload-release-action@v2
+  #      with:
+  #        repo_token: ${{ secrets.GITHUB_TOKEN }}
+  #        file: target/aarch64-unknown-linux-musl/release/kubie
+  #        asset_name: kubie-linux-arm64
+  #        tag: ${{ github.ref }}
 
   build-macos-amd64:
     runs-on: macos-latest
@@ -75,14 +75,12 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --release
+          target: x86_64-apple-darwin
+      - run: SDKROOT=$(xcrun --sdk macosx --show-sdk-path) MACOSX_DEPLOYMENT_TARGET=11.0 cargo build --release --target x86_64-apple-darwin
       - uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/release/kubie
+          file: target/x86_64-apple-darwin/release/kubie
           asset_name: kubie-darwin-amd64
           tag: ${{ github.ref }}
 
@@ -102,18 +100,18 @@ jobs:
           asset_name: kubie-darwin-arm64
           tag: ${{ github.ref }}
 
-  publish-crates-io:
-    name: Publish to crates.io
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v3
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - run: cargo publish --token ${CRATES_TOKEN}
-        env:
-          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
+  #publish-crates-io:
+  #  name: Publish to crates.io
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: Checkout sources
+  #      uses: actions/checkout@v3
+  #    - name: Install stable toolchain
+  #      uses: actions-rs/toolchain@v1
+  #      with:
+  #        profile: minimal
+  #        toolchain: stable
+  #        override: true
+  #    - run: cargo publish --token ${CRATES_TOKEN}
+  #      env:
+  #        CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
